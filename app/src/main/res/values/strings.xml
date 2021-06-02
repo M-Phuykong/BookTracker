@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">BookTracker</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+
+    <string name="book_1">ありふれた職業で世界最強 1</string>
+    <string name="book_2">ゴブリンスレイヤー1</string>
+    <string name="book_3">天気の子</string>
+    <string name="book_4">君の名は</string>
+    <string name="book_5">スライム倒して300年　知らないうちにレベルMAXになってました 1</string>
+
+
+
+    <string name="action_switch_layout">action_switch_layout</string>
+    <string name="search" />
+    <string name="add_item_button" />
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="submit">Submit</string>
+</resources>
