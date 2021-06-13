@@ -6,6 +6,7 @@ import android.view.*
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,8 +20,11 @@ class BookCollectionList : Fragment() {
 
     private var _binding: FragmentBookCollectionListBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var recyclerView: RecyclerView
-    private var isLinearLayout = true
+
+    private val viewModel: BookCollectionViewModel by viewModels()
+
     private var layoutType: Int = 0
 
     companion object{
@@ -47,22 +51,14 @@ class BookCollectionList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.recyclerView
 
-
-        //NOT YET FINISH, NEED TO WORK ON SAVE STATE
-        if (savedInstanceState != null){
-            layoutType =savedInstanceState.getInt("Orientation",0)
-        }
-
         setLayout()
 
         binding.floatingAddButton.setOnClickListener{
             Log.d(B,"ADD BUTTON IS PRESSED")
-
             //Move to [fragment_adding_new_book_page]
             val action = BookCollectionListDirections.actionBookCollectionListToAddingNewBookPage()
             view.findNavController().navigate(action)
         }
-
 
         binding.bottomAppBar.setNavigationOnClickListener{
             ///MENU BUTTON (THREE DASH) -> DO SOMETHING
@@ -85,22 +81,12 @@ class BookCollectionList : Fragment() {
             }
         }
 
-
-
-
         val textView: TextView = view.findViewById(R.id.text_view_list_item)
         textView.text = Datasource().loadBookList().size.toString()
 
 
     }
 
-
-
-    // NEED TO WORK ON THIS (SAVE STATE)
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("Orientation", layoutType)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.layout_menu, menu)
@@ -112,7 +98,9 @@ class BookCollectionList : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_switch_layout -> {
-                isLinearLayout = !isLinearLayout
+                if (viewModel.isLinear){
+                    viewModel.changeLayout(0)
+                } else viewModel.changeLayout(1)
                 setLayout()
                 setIcon(item)
                 return true
@@ -127,15 +115,13 @@ class BookCollectionList : Fragment() {
         if (menuItem == null)
             return
         menuItem.icon =
-            if (isLinearLayout)
+            if (viewModel.isLinear)
                 ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_grid_view)
             else ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_list_view)
     }
 
-
-    ///Set Layout
     private fun setLayout() {
-        if (isLinearLayout) {
+        if (viewModel.isLinear) {
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             layoutType = 0
 
@@ -145,8 +131,6 @@ class BookCollectionList : Fragment() {
 
         }
         recyclerView.adapter = BookCollectionAdapter(Datasource().loadBookList(), requireContext(), layoutType)
-
-
 
     }
 

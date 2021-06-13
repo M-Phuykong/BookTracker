@@ -2,7 +2,6 @@ package com.example.booktracker
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.booktracker.data.Datasource
@@ -25,7 +25,6 @@ class adding_new_book_page : Fragment() {
     private var _binding: FragmentAddingNewBookPageBinding? = null
     private val binding get() = _binding!!
     private var RESULT_LOAD_IMAGE: Int = 0
-    private lateinit var selectedImage : Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +49,9 @@ class adding_new_book_page : Fragment() {
         binding.submitButton.setOnClickListener {
             Log.d("BUTTON", "Submit Button is being pressed")
 
-            getData()
-
-            val action =
-                adding_new_book_pageDirections.actionAddingNewBookPageToBookCollectionList()
-            view.findNavController().navigate(action)
+            addData()
+            //Goes back to the previous fragment (BookCollection)
+            view.findNavController().popBackStack()
         }
 
 
@@ -78,36 +75,32 @@ class adding_new_book_page : Fragment() {
             Activity.RESULT_OK -> {
                 try {
                     val imageURI: Uri = data!!.data!!
-                    val imageStream : InputStream? = activity?.contentResolver?.openInputStream(imageURI)
-                    selectedImage = BitmapFactory.decodeStream(imageStream)
+                    val imageStream: InputStream? =
+                        activity?.contentResolver?.openInputStream(imageURI)
+                    val selectedImage = BitmapFactory.decodeStream(imageStream)
                     binding.uploadImageButton.setImageBitmap(selectedImage)
                     //Toast.makeText(context, "IMAGE ADDED!", Toast.LENGTH_SHORT).show();
-
-
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace();
                     Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
-
                 }
-
             }
             else -> {
                 Toast.makeText(context, "Error on Image Selection", Toast.LENGTH_SHORT).show();
             }
-
-
         }
 
 
     }
 
-    private fun getData() {
+    private fun addData() {
         val newBookTitle = binding.titleInputEditField.text.toString()
-        Datasource().loadBookList().add(BookList(newBookTitle, selectedImage))
+        val newBookImage = binding.uploadImageButton.drawable.toBitmap()
+        Datasource().loadBookList().add(BookList(newBookTitle, newBookImage))
         Log.d("BUTTON", "getData() is being called")
 
-    }
 
+    }
 
 
 }
