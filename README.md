@@ -4,7 +4,7 @@ First App Made with Android Studio; Following Google's "Android Basics in Kotlin
 **BookTracker**: An app made to track all the book that you have read.
 
 **Features**:
-+ List mode and Gride mode
++ List mode and Grid mode
 + Support Picture imports
 + Orientations Change safe
 + Impletemetation of ViewModel
